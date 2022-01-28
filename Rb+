@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ 
+int main(int argc , char* argv[])
+{ 
+    if (argc != 2) 
+    {   // Test for correct number of arguments 
+    	fprintf(stderr, "Usage: %s <Server Port>\n", argv[0]) ;
+        exit(1);
+    }
+ 
+    FILE *source;
+    char word[20];
+    int pos, size_w ,size_r;
+    int flag=0;
+    
+    // opening the file 
+    source = fopen(argv[1], "rb+"); 
+    if (source == NULL ) 
+    {
+    	printf("Can't open file.");
+        exit(0);
+    }
+
+    fseek(source, 0, SEEK_END);
+    int rsize= ftell(source);
+    rewind(source);
+    
+    char *read = (char*)malloc(rsize+10);
+    
+    puts("\n\nEnter the word to find:");
+    fgets(word, 20, stdin);
+    word[strlen(word) - 1] = word[strlen(word)];   // removing new line escape sequence
+    size_w =strlen(word);
+    printf("No of character you wanted to find is %d",size_w);
+    
+    char replace[size_w + 1];    
+    puts("\n\nEnter the word to replace:");
+    printf(" Please enter exactly %d character to replace\n", size_w);  // to avoid overlaping
+    fgets(replace, size_w +1, stdin);
+    printf("\n size - %ld , word  %s",strlen(replace),replace);
+    replace[strlen(replace) - 1] = replace[strlen(replace)];
+    size_r=strlen(replace);
+    
+    
+    while (!feof(source))
+    {
+        fscanf(source, "%s", read);
+        if (strcmp(read, word) == 0)
+        {
+         	printf("\n founded the word \"%s\" ", read);
+                fseek(source,0,SEEK_CUR);
+                pos = ftell(source);
+                printf(" at position %d", pos );
+          
+                //printf(" position %ld", ftell(source));
+	  	fseek(source, pos - size_w ,SEEK_SET);
+    
+          	ftell(source);
+          	printf(" position %ld", ftell(source));
+          	fwrite(replace, 1 , size_r, source );
+          	flag++;
+        }
+    }
+   
+    if(flag==0)
+    {
+    	printf("\n unable to find the word => %s\n",word);
+    }
+    else
+    {
+    	printf("\n finish write success....\n");
+    }
+
+    fclose(source);
+
+    return 0;
+}
+ 

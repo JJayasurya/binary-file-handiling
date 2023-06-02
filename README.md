@@ -1,1 +1,1 @@
-# Rewriting-a.out-file-using-binary-file-handiling
+# Binary-file-handiling
